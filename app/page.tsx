@@ -53,8 +53,6 @@ export default function ReservationPage() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showLineHelp, setShowLineHelp] = useState(false);
-
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -177,6 +175,51 @@ export default function ReservationPage() {
             ⚠️ {error}
           </div>
         )}
+
+        {/* LINE友達追加セクション */}
+        <section className="bg-green-50 border border-green-200 rounded-xl p-5">
+          <h2 className="text-base font-bold text-green-800 mb-1">
+            📱 LINEで予約確認・リマインドを受け取る
+          </h2>
+          <p className="text-xs text-green-700 mb-4">
+            予約前にLINEボットを友達追加してください。予約後に確認メッセージと面談1時間前のリマインドが届きます。
+          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            {/* QRコード */}
+            <div className="flex flex-col items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://qr-official.line.me/sid/L/614mxhmw.png"
+                alt="LINE友達追加QRコード"
+                width={120}
+                height={120}
+                className="rounded-lg border border-green-200"
+              />
+              <p className="text-xs text-gray-500 mt-1">QRコードで追加</p>
+            </div>
+            {/* 説明と友達追加ボタン */}
+            <div className="flex-1 space-y-3">
+              <a
+                href="https://line.me/R/ti/p/@614mxhmw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-3 px-4 rounded-xl transition-colors"
+              >
+                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white">
+                  <path d="M12 2C6.48 2 2 6.02 2 11c0 4.17 2.76 7.7 6.6 9.12.46.08.63-.2.63-.44v-1.55c-2.56.56-3.1-1.23-3.1-1.23-.42-1.07-1.03-1.35-1.03-1.35-.84-.57.06-.56.06-.56.93.07 1.42.96 1.42.96.83 1.41 2.17 1 2.7.77.08-.6.32-1 .59-1.23-2.05-.23-4.2-1.02-4.2-4.56 0-1.01.36-1.83.96-2.48-.1-.23-.42-1.17.09-2.44 0 0 .78-.25 2.55.95A8.84 8.84 0 0 1 12 6.8c.79 0 1.58.1 2.32.3 1.77-1.2 2.55-.95 2.55-.95.51 1.27.19 2.21.09 2.44.6.65.96 1.47.96 2.48 0 3.55-2.16 4.33-4.22 4.56.33.29.63.85.63 1.71v2.54c0 .25.17.53.64.44C19.24 18.7 22 15.17 22 11c0-4.98-4.48-9-10-9z"/>
+                </svg>
+                LINEで友達追加
+              </a>
+              <div className="bg-white border border-green-100 rounded-lg p-3 text-xs text-gray-600 space-y-1">
+                <p className="font-semibold text-green-700">友達追加後の手順</p>
+                <p>① 上のボタン or QRコードで友達追加</p>
+                <p>② ボットに「こんにちは」などメッセージを送る</p>
+                <p>③ ボットがあなたの<strong>ユーザーID</strong>を返信</p>
+                <p>④ そのIDを下の予約フォームに貼り付け</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* スロット選択 */}
         <section>
@@ -327,22 +370,9 @@ export default function ReservationPage() {
                   placeholder="U1234567890abcdef..."
                   className="w-full border border-green-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowLineHelp(!showLineHelp)}
-                  className="mt-2 text-xs text-green-700 underline"
-                >
-                  LINE ユーザーIDの確認方法
-                </button>
-                {showLineHelp && (
-                  <div className="mt-2 bg-white border border-green-200 rounded-lg p-3 text-xs text-gray-600 space-y-1">
-                    <p className="font-semibold text-green-700">📋 IDの確認手順</p>
-                    <p>① 予約通知用LINEボットを友達追加する</p>
-                    <p>② ボットに何かメッセージを送る（例：「こんにちは」）</p>
-                    <p>③ ボットがあなたのユーザーIDを返信します</p>
-                    <p>④ そのIDをコピーしてこちらに貼り付けてください</p>
-                  </div>
-                )}
+                <p className="mt-1 text-xs text-green-600">
+                ※ ページ上部のLINEボットに友達追加後、メッセージを送るとIDが届きます
+              </p>
               </div>
 
               <div>
