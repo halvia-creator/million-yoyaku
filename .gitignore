@@ -27,6 +27,17 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
+
+# Claude Code
+.claude/
+
+# Prisma SQLite DB
+*.db
+*.db-journal
+
+# Prisma generated client (再生成可能)
+/app/generated/
 
 # vercel
 .vercel
@@ -34,3 +45,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
