@@ -1,25 +1,26 @@
 import { PrismaClient } from "@/app/generated/prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-import path from "path";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-function createPrismaClient(): PrismaClient {
-  // DATABASE_URL が "file:./dev.db" 形式を想定
-  const dbUrl = process.env.DATABASE_URL ?? "file:./dev.db";
-  const dbPath = dbUrl.replace(/^file:/, "");
-  const absolutePath = path.isAbsolute(dbPath)
-    ? dbPath
-    : path.join(process.cwd(), dbPath);
+function getPrismaClient(): PrismaClient {
+  if (globalForPrisma.prisma) return globalForPrisma.prisma;
 
-  const adapter = new PrismaBetterSqlite3({ url: absolutePath });
-  return new PrismaClient({ adapter });
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) {
+    throw new Error("DATABASE_URL 環境変数が設定されていません");
+  }
+
+  // PoolConfig（プレーンオブジェクト）で渡す
+  const adapter = new PrismaPg({ connectionString: dbUrl });
+  const client = new PrismaClient({ adapter });
+
+  if (process.env.NODE_ENV !== "production") {
+    globalForPrisma.prisma = client;
+  }
+  return client;
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
-}
+export const prisma = getPrismaClient();
