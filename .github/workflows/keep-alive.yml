@@ -1,0 +1,21 @@
+name: Keep Alive & Send Reminders
+
+on:
+  schedule:
+    # 5分ごとに実行（UTC）
+    - cron: "*/5 * * * *"
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: サイトを起動状態に保つ
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" https://million-yoyaku.onrender.com
+          echo " - Ping完了"
+
+      - name: リマインド送信チェック
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" "https://million-yoyaku.onrender.com/api/remind"
+          echo " - リマインドチェック完了"
