@@ -11,15 +11,17 @@ datasource db {
 }
 
 model Reservation {
-  id        Int      @id @default(autoincrement())
-  date      String   // "YYYY-MM-DD"
-  startTime String   // "HH:MM"
-  endTime   String   // "HH:MM"
-  name      String
-  lineName  String
-  nickname  String
-  memo      String   @default("")
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  date        String   // "YYYY-MM-DD"
+  startTime   String   // "HH:MM"
+  endTime     String   // "HH:MM"
+  name        String
+  lineName    String
+  nickname    String
+  memo        String   @default("")
+  lineUserId  String   @default("")  // 予約者のLINEユーザーID
+  reminded    Boolean  @default(false) // リマインド送信済み
+  createdAt   DateTime @default(now())
 }
 
 model Schedule {

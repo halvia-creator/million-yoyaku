@@ -25,6 +25,7 @@ type FormData = {
   lineName: string;
   nickname: string;
   memo: string;
+  lineUserId: string;
 };
 
 // "YYYY-MM-DD" → "○月○日（曜日）"
@@ -46,11 +47,13 @@ export default function ReservationPage() {
     lineName: "",
     nickname: "",
     memo: "",
+    lineUserId: "",
   });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showLineHelp, setShowLineHelp] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -121,7 +124,7 @@ export default function ReservationPage() {
 
       setSuccess(true);
       setSelectedSlot(null);
-      setFormData({ name: "", lineName: "", nickname: "", memo: "" });
+      setFormData({ name: "", lineName: "", nickname: "", memo: "", lineUserId: "" });
       fetchData();
     } catch {
       setError("ネットワークエラーが発生しました");
@@ -163,7 +166,7 @@ export default function ReservationPage() {
           <div className="bg-green-50 border border-green-200 rounded-xl p-5 text-green-800">
             <p className="font-bold text-lg">✅ 予約が完了しました！</p>
             <p className="text-sm mt-1">
-              ご予約ありがとうございます。当日の面談をお楽しみにお待ちください。
+              ご予約ありがとうございます。LINEユーザーIDをご入力いただいた方には、確認メッセージとリマインドをLINEでお送りします。
             </p>
           </div>
         )}
@@ -299,6 +302,47 @@ export default function ReservationPage() {
                   placeholder="たろう"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent"
                 />
+              </div>
+
+              {/* LINE ユーザーID */}
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  📱 LINE ユーザーID{" "}
+                  <span className="text-gray-400 text-xs font-normal">
+                    （任意）
+                  </span>
+                </label>
+                <p className="text-xs text-gray-500 mb-2">
+                  入力すると、予約確認と面談1時間前のリマインドをLINEでお届けします。
+                </p>
+                <input
+                  type="text"
+                  value={formData.lineUserId}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      lineUserId: e.target.value,
+                    }))
+                  }
+                  placeholder="U1234567890abcdef..."
+                  className="w-full border border-green-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowLineHelp(!showLineHelp)}
+                  className="mt-2 text-xs text-green-700 underline"
+                >
+                  LINE ユーザーIDの確認方法
+                </button>
+                {showLineHelp && (
+                  <div className="mt-2 bg-white border border-green-200 rounded-lg p-3 text-xs text-gray-600 space-y-1">
+                    <p className="font-semibold text-green-700">📋 IDの確認手順</p>
+                    <p>① 予約通知用LINEボットを友達追加する</p>
+                    <p>② ボットに何かメッセージを送る（例：「こんにちは」）</p>
+                    <p>③ ボットがあなたのユーザーIDを返信します</p>
+                    <p>④ そのIDをコピーしてこちらに貼り付けてください</p>
+                  </div>
+                )}
               </div>
 
               <div>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Narrow 面談予約",
+  title: "面談予約",
   description: "面談予約システム",
 };
 

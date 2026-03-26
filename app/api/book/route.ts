@@ -1,17 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendLineNotification, buildReservationMessage } from "@/lib/line";
+import {
+  sendLineNotification,
+  sendLineToUser,
+  buildAdminNotificationMessage,
+  buildUserConfirmationMessage,
+} from "@/lib/line";
 
 // POST /api/book
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { date, startTime, endTime, name, lineName, nickname, memo = "" } = body;
+    const {
+      date,
+      startTime,
+      endTime,
+      name,
+      lineName,
+      nickname,
+      memo = "",
+      lineUserId = "",
+    } = body;
 
     // バリデーション
     if (!date || !startTime || !endTime || !name || !lineName || !nickname) {
       return NextResponse.json(
-        { error: "必須項目が不足しています（date, startTime, endTime, name, lineName, nickname）" },
+        {
+          error:
+            "必須項目が不足しています（date, startTime, endTime, name, lineName, nickname）",
+        },
         { status: 400 }
       );
     }
@@ -50,11 +67,12 @@ export async function POST(request: NextRequest) {
         lineName,
         nickname,
         memo,
+        lineUserId,
       },
     });
 
-    // LINE Push通知（失敗しても予約は成功扱い）
-    const message = buildReservationMessage({
+    // 管理者へLINE通知（失敗しても予約は成功扱い）
+    const adminMsg = buildAdminNotificationMessage({
       date,
       startTime,
       endTime,
@@ -63,7 +81,19 @@ export async function POST(request: NextRequest) {
       nickname,
       memo,
     });
-    await sendLineNotification(message);
+    await sendLineNotification(adminMsg);
+
+    // 予約者へLINE確認メッセージ（lineUserId がある場合のみ）
+    if (lineUserId) {
+      const userMsg = buildUserConfirmationMessage({
+        date,
+        startTime,
+        endTime,
+        name,
+        nickname,
+      });
+      await sendLineToUser(lineUserId, userMsg);
+    }
 
     return NextResponse.json({ success: true, reservation }, { status: 201 });
   } catch (error) {
